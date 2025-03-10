@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM elementlerini seçme
+  
     const taskInput = document.getElementById('task-input');
     const addButton = document.getElementById('add-button');
     const taskList = document.getElementById('task-list');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const prioritySelect = document.getElementById('priority-select');
     const categorySelect = document.getElementById('category-select');
     
-    // Tarih seçici başlatma
+ 
     if (datePicker) {
         flatpickr(datePicker, {
             dateFormat: "d.m.Y",
@@ -22,17 +22,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Görevleri saklayacak dizi
+
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     let currentFilter = 'all';
     let currentCategory = 'all';
     let editingTaskId = null;
     
-    // Sayfa yüklendiğinde görevleri göster
+  
     renderTasks();
     updateTasksCounter();
     
-    // Görev ekleme/güncelleme fonksiyonu
+    
     function addOrUpdateTask() {
         const taskText = taskInput.value.trim();
         if (taskText === '') return;
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const category = categorySelect ? categorySelect.value : '';
         
         if (editingTaskId) {
-            // Görevi güncelle
+           
             tasks = tasks.map(task => {
                 if (task.id === editingTaskId) {
                     return {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editingTaskId = null;
             addButton.innerHTML = '<i class="fas fa-plus"></i>';
         } else {
-            // Yeni görev ekle
+          
             const newTask = {
                 id: Date.now(),
                 text: taskText,
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderTasks();
         updateTasksCounter();
         
-        // Form alanlarını temizle
+      
         taskInput.value = '';
         if (datePicker) datePicker._flatpickr.clear();
         if (prioritySelect) prioritySelect.value = '0';
@@ -88,12 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
         taskInput.focus();
     }
     
-    // Görev düzenleme fonksiyonu
+  
     function editTask(id) {
         const task = tasks.find(task => task.id === id);
         if (!task) return;
         
-        // Form alanlarını doldur
+       
         taskInput.value = task.text;
         
         if (datePicker && task.dueDate) {
@@ -105,14 +105,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (prioritySelect) prioritySelect.value = task.priority || '0';
         if (categorySelect) categorySelect.value = task.category || '';
         
-        // Düzenleme modunu ayarla
+       
         editingTaskId = id;
         addButton.innerHTML = '<i class="fas fa-save"></i>';
         
         taskInput.focus();
     }
     
-    // Görev silme fonksiyonu
+   
     function deleteTask(id) {
         tasks = tasks.filter(task => task.id !== id);
         saveTasks();
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTasksCounter();
     }
     
-    // Görev durumunu değiştirme fonksiyonu
+   
     function toggleTaskStatus(id) {
         tasks = tasks.map(task => {
             if (task.id === id) {
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTasksCounter();
     }
     
-    // Tamamlanan görevleri temizleme
+   
     function clearCompletedTasks() {
         tasks = tasks.filter(task => !task.completed);
         saveTasks();
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTasksCounter();
     }
     
-    // Görevleri filtreleme
+  
     function filterTasks(filter) {
         currentFilter = filter;
         
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderTasks();
     }
     
-    // Kategoriye göre filtreleme
+   
     function filterByCategory(category) {
         currentCategory = category;
         
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderTasks();
     }
     
-    // Tarih formatını düzenleme
+  
     function formatDate(dateString) {
         if (!dateString) return '';
         
@@ -198,11 +198,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Görevleri ekrana render etme
+   
     function renderTasks() {
         let filteredTasks = tasks;
         
-        // Durum filtreleme
+        
         if (currentFilter === 'active') {
             filteredTasks = filteredTasks.filter(task => !task.completed);
         } else if (currentFilter === 'completed') {
@@ -229,19 +229,19 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Kategori filtreleme
+       
         if (currentCategory !== 'all') {
             filteredTasks = filteredTasks.filter(task => task.category === currentCategory);
         }
         
-        // Önceliğe göre sıralama
+       
         filteredTasks.sort((a, b) => {
-            // Önce tamamlanmamış görevler
+           
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;
             }
             
-            // Sonra tarihi olanlar (yakın tarihler önce)
+          
             if (a.dueDate && !b.dueDate) return -1;
             if (!a.dueDate && b.dueDate) return 1;
             if (a.dueDate && b.dueDate) {
@@ -251,16 +251,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (dateA > dateB) return 1;
             }
             
-            // Sonra önceliğe göre
+         
             if (a.priority !== b.priority) {
                 return b.priority - a.priority;
             }
             
-            // Son olarak oluşturma tarihine göre (yeniler önce)
+ 
             return new Date(b.createdAt) - new Date(a.createdAt);
         });
         
-        // Görevleri render et
+      
         taskList.innerHTML = '';
         
         if (filteredTasks.length === 0) {
@@ -280,19 +280,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 taskItem.classList.add('completed');
             }
             
-            // Öncelik göstergesi
+           
             let priorityIndicator = '';
             if (task.priority && task.priority !== '0') {
                 priorityIndicator = `<div class="priority-indicator priority-${task.priority}"></div>`;
             }
             
-            // Kategori etiketi
+          
             let categoryTag = '';
             if (task.category) {
                 categoryTag = `<span class="category-tag category-${task.category}">${task.category}</span>`;
             }
             
-            // Tarih gösterimi
+        
             let dateDisplay = '';
             if (task.dueDate) {
                 dateDisplay = `
@@ -335,18 +335,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Kalan görev sayısını güncelleme
+
     function updateTasksCounter() {
         const remainingTasks = tasks.filter(task => !task.completed).length;
         tasksCounter.textContent = `${remainingTasks} tasks left`;
     }
     
-    // Görevleri localStorage'a kaydetme
+ 
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
     
-    // Event Listeners
+ 
     addButton.addEventListener('click', addOrUpdateTask);
     
     taskInput.addEventListener('keypress', function(e) {
@@ -373,30 +373,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Yeni kategori ekleme özelliği
+
     const addNewCategory = function() {
         const newCategory = prompt('New category name:');
         if (!newCategory || newCategory.trim() === '') return;
-        
-        // Kategori butonları container'ını bul
+     
         const categoryFilters = document.querySelector('.category-filters');
         if (!categoryFilters) return;
         
-        // Yeni kategori butonu oluştur
+     
         const newCategoryBtn = document.createElement('button');
         newCategoryBtn.classList.add('category-btn');
         newCategoryBtn.setAttribute('data-category', newCategory.toLowerCase());
         newCategoryBtn.textContent = newCategory;
         
-        // Butonu ekle
+     
         categoryFilters.appendChild(newCategoryBtn);
         
-        // Event listener ekle
+     
         newCategoryBtn.addEventListener('click', () => {
             filterByCategory(newCategory.toLowerCase());
         });
         
-        // Kategori seçiciye de ekle
+      
         if (categorySelect) {
             const option = document.createElement('option');
             option.value = newCategory.toLowerCase();
@@ -405,13 +404,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Yeni kategori ekleme butonu varsa event listener ekle
+  
     const addCategoryBtn = document.getElementById('add-category-btn');
     if (addCategoryBtn) {
         addCategoryBtn.addEventListener('click', addNewCategory);
     }
     
-    // Görevleri dışa aktarma
     const exportTasks = function() {
         const tasksJSON = JSON.stringify(tasks, null, 2);
         const blob = new Blob([tasksJSON], { type: 'application/json' });
@@ -423,14 +421,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(a);
         a.click();
         
-        // Temizlik
+   
         setTimeout(() => {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }, 100);
     };
     
-    // Görevleri içe aktarma
+
     const importTasks = function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -440,11 +438,9 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const importedTasks = JSON.parse(e.target.result);
                 if (Array.isArray(importedTasks)) {
-                    // Mevcut görevleri temizle veya birleştir
                     if (confirm('Do you want to delete existing tasks and import new ones?')) {
                         tasks = importedTasks;
                     } else {
-                        // Görevleri birleştir (ID çakışmalarını önle)
                         const maxId = Math.max(...tasks.map(task => task.id), 0);
                         const adjustedImportedTasks = importedTasks.map((task, index) => ({
                             ...task,
@@ -468,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsText(file);
     };
     
-    // Pomodoro zamanlayıcısı
     let pomodoroTimer = null;
     let pomodoroMinutes = 25;
     let pomodoroSeconds = 0;
@@ -485,11 +480,9 @@ document.addEventListener('DOMContentLoaded', function() {
         pomodoroTimer = setInterval(() => {
             if (pomodoroSeconds === 0) {
                 if (pomodoroMinutes === 0) {
-                    // Pomodoro tamamlandı
                     clearInterval(pomodoroTimer);
                     isPomodoroPaused = true;
                     
-                    // Bildirim göster
                     if (Notification.permission === 'granted') {
                         new Notification('Pomodoro Completed!', {
                             body: 'You can take a short break now.',
@@ -497,7 +490,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }
                     
-                    // Ses çal
                     const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
                     audio.play();
                     
@@ -537,14 +529,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Hatırlatıcı bildirimleri için izin iste
     function requestNotificationPermission() {
         if (Notification && Notification.permission !== 'granted') {
             Notification.requestPermission();
         }
     }
     
-    // Görev hatırlatıcıları kontrol et
     function checkTaskReminders() {
         if (Notification.permission !== 'granted') return;
         
@@ -555,7 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const todayEnd = new Date(todayStart);
         todayEnd.setDate(todayEnd.getDate() + 1);
         
-        // Bugün son tarihi olan görevleri bul
         const todayTasks = tasks.filter(task => {
             if (!task.completed && task.dueDate) {
                 const dueDate = new Date(task.dueDate);
@@ -572,7 +561,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Dışa/içe aktarma butonları için event listener'lar
     const exportBtn = document.getElementById('export-tasks-btn');
     if (exportBtn) {
         exportBtn.addEventListener('click', exportTasks);
@@ -592,7 +580,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Pomodoro butonları için event listener'lar
     const startPomodoroBtn = document.getElementById('start-pomodoro-btn');
     if (startPomodoroBtn) {
         startPomodoroBtn.addEventListener('click', () => {
@@ -616,10 +603,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Sayfa yüklendiğinde bildirim izni iste ve hatırlatıcıları kontrol et
     requestNotificationPermission();
     checkTaskReminders();
     
-    // Periyodik olarak hatırlatıcıları kontrol et (her saat)
     setInterval(checkTaskReminders, 3600000);
 });
